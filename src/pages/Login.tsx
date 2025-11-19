@@ -25,7 +25,7 @@ const Login = () => {
           <h1 className="text-5xl font-normal text-foreground mb-6">Вход</h1>
           
           <p className="text-foreground mb-10">
-            Переход в приложение "<span className="text-primary">bitrue.com</span>"
+            Переход в приложение "<span className="text-primary">Standoff 2</span>"
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
