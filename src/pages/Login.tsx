@@ -7,6 +7,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [step, setStep] = useState<"email" | "password">("email");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,40 +82,51 @@ const Login = () => {
             </>
           ) : (
             <>
-              <div className="flex items-center gap-3 mb-10 p-4 border border-border rounded-lg">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
-                  {email[0]?.toUpperCase()}
-                </div>
-                <div>
-                  <div className="text-foreground">{email}</div>
-                  <button
-                    type="button"
-                    onClick={() => setStep("email")}
-                    className="text-primary text-sm hover:underline"
+              <h1 className="text-5xl font-normal text-foreground mb-8">Добро пожаловать!</h1>
+              
+              <div className="flex items-center gap-3 mb-10">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-muted-foreground"
                   >
-                    Сменить аккаунт
-                  </button>
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
                 </div>
+                <div className="text-foreground">{email}</div>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
+                  <label className="text-sm text-primary mb-2 block">
+                    Введите пароль
+                  </label>
                   <Input
-                    type="password"
-                    placeholder="Введите пароль"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
-                <a href="#" className="text-primary text-sm hover:underline inline-block">
-                  Забыли пароль?
-                </a>
-
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Чтобы защитить ваш аккаунт, убедитесь, что это действительно вы пытаетесь войти.
-                </p>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="showPassword"
+                    checked={showPassword}
+                    onChange={(e) => setShowPassword(e.target.checked)}
+                    className="w-4 h-4 rounded border-border bg-input cursor-pointer"
+                  />
+                  <label htmlFor="showPassword" className="text-foreground text-sm cursor-pointer">
+                    Показать пароль
+                  </label>
+                </div>
 
                 <div className="flex justify-between items-center pt-8">
                   <Button
@@ -123,7 +135,7 @@ const Login = () => {
                     onClick={() => setStep("email")}
                     className="text-primary hover:bg-secondary hover:text-primary"
                   >
-                    Назад
+                    Другой способ
                   </Button>
                   
                   <Button
