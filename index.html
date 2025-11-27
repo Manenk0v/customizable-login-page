@@ -6,19 +6,6 @@
     <title>Вход через Google</title>
     <meta name="description" content="Безопасная система аутентификации в стиле Google" />
     <meta name="author" content="Lovable" />
-    
-    <script>
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location))
-    </script>
 
     <meta property="og:title" content="aec65081-7bab-43bb-85da-a75bb55fa973" />
     <meta property="og:description" content="Lovable Generated Project" />
