@@ -16,6 +16,12 @@ const Login = () => {
     
     if (step === "email") {
       if (email) {
+        // Проверяем валидность формата email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          toast.error("Введите действительный адрес электронной почты");
+          return;
+        }
         setStep("password");
       }
     } else {
@@ -57,7 +63,7 @@ const Login = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <Input
-                    type="text"
+                    type="email"
                     placeholder="Телефон или адрес эл. почты"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
