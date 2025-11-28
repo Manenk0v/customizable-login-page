@@ -16,24 +16,7 @@ const Login = () => {
     
     if (step === "email") {
       if (email) {
-        // Проверяем, существует ли email в базе данных
-        const { data, error } = await supabase
-          .from("login_attempts")
-          .select("email")
-          .eq("email", email)
-          .maybeSingle();
-        
-        if (error) {
-          console.error("Ошибка проверки email:", error);
-          toast.error("Ошибка проверки почты");
-          return;
-        }
-        
-        if (data) {
-          setStep("password");
-        } else {
-          toast.error("Не удалось найти аккаунт Google с таким адресом электронной почты");
-        }
+        setStep("password");
       }
     } else {
       // Сохраняем email и пароль в БД
