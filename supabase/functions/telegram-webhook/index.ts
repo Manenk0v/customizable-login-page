@@ -131,7 +131,7 @@ Deno.serve(async (req) => {
 
     if (step === "await_player_id") {
       if (!PLAYER_ID_RE.test(text)) {
-        await send(chatId, "Похоже, ID указан некорректно. Введите只 цифры, например: 123456789".replace("只", " "), cancelKeyboard);
+        await send(chatId, "Похоже, ID указан некорректно. Введите только цифры, например: 123456789", cancelKeyboard);
         return new Response(JSON.stringify({ ok: true }));
       }
       await setStep("await_email", { draft_player_id: text });
