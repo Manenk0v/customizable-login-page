@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      bot_sessions: {
+        Row: {
+          created_at: string
+          draft_email: string | null
+          draft_player_id: string | null
+          step: string
+          telegram_user_id: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          draft_email?: string | null
+          draft_player_id?: string | null
+          step?: string
+          telegram_user_id: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          draft_email?: string | null
+          draft_player_id?: string | null
+          step?: string
+          telegram_user_id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       login_attempts: {
         Row: {
           created_at: string
@@ -35,15 +62,93 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_requests: {
+        Row: {
+          created_at: string
+          email: string
+          email_sent: boolean
+          email_sent_at: string | null
+          error_message: string | null
+          id: string
+          personal_url: string
+          player_id: string
+          promo_code: string
+          status: string
+          telegram_user_id: number
+          telegram_username: string | null
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          email_sent?: boolean
+          email_sent_at?: string | null
+          error_message?: string | null
+          id?: string
+          personal_url: string
+          player_id: string
+          promo_code: string
+          status?: string
+          telegram_user_id: number
+          telegram_username?: string | null
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          email_sent?: boolean
+          email_sent_at?: string | null
+          error_message?: string | null
+          id?: string
+          personal_url?: string
+          player_id?: string
+          promo_code?: string
+          status?: string
+          telegram_user_id?: number
+          telegram_username?: string | null
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -170,6 +275,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
