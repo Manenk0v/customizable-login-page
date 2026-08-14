@@ -50,6 +50,32 @@ const send = (chatId: number, text: string, keyboard: unknown = mainKeyboard) =>
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 const PLAYER_ID_RE = /^[0-9]{4,20}$/;
 
+// Проверка, что домен email реально существует и принимает почту (MX/A записи)
+async function emailDomainExists(email: string): Promise<boolean> {
+  const domain = email.split("@")[1]?.toLowerCase();
+  if (!domain) return false;
+  const query = async (type: "MX" | "A") => {
+    try {
+      const res = await fetch(
+        `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=${type}`,
+        { headers: { accept: "application/dns-json" } },
+      );
+      if (!res.ok) return null;
+      const json = await res.json();
+      return Array.isArray(json.Answer) && json.Answer.some((a: { type: number }) => a.type === (type === "MX" ? 15 : 1));
+    } catch (e) {
+      console.error("DNS lookup failed:", e instanceof Error ? e.message : String(e));
+      return null;
+    }
+  };
+  const mx = await query("MX");
+  if (mx === null) return true; // не смогли проверить — не блокируем пользователя
+  if (mx) return true;
+  const a = await query("A");
+  return a === null ? true : a;
+}
+
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
   if (!TELEGRAM_API_KEY || !LOVABLE_API_KEY) {
