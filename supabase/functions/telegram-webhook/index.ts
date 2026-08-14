@@ -166,12 +166,13 @@ Deno.serve(async (req) => {
 
         const { data: dup } = await supabase
           .from("promo_requests").select("email")
-          .or(`player_id.eq.${playerId},email.eq.${email}`).maybeSingle();
+          .eq("telegram_user_id", tgUserId).maybeSingle();
         if (dup) {
           await setStep("idle", { draft_player_id: null, draft_email: null });
-          await send(chatId, `Для этих данных персональная ссылка уже была создана.\n\n📧 Она будет отправлена на: ${dup.email}`);
+          await send(chatId, `Для этого аккаунта персональная ссылка уже была создана.\n\n📧 Она будет отправлена на: ${dup.email}`);
           return new Response(JSON.stringify({ ok: true }));
         }
+
 
         const promo = await promoService.generatePromo(playerId, tgUserId);
         const { error } = await supabase.from("promo_requests").insert({
