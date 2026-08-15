@@ -166,14 +166,26 @@ Deno.serve(async (req) => {
     }
 
     if (step === "await_email") {
-      if (!EMAIL_RE.test(text) || text.length > 255) {
+      const email = text.trim().toLowerCase();
+      if (!EMAIL_RE.test(email) || email.length > 255) {
         await send(chatId, "Похоже, email указан некорректно. Пожалуйста, проверьте его и попробуйте ещё раз.", cancelKeyboard);
         return new Response(JSON.stringify({ ok: true }));
       }
-      await setStep("await_confirm", { draft_email: text });
-      await send(chatId, `Проверьте данные:\n\n🎮 ID игрока: ${session?.draft_player_id}\n📧 Email: ${text}\n\nЕсли всё верно, нажмите «Получить ссылку».`, confirmKeyboard);
+      if (!(await emailDomainExists(email))) {
+        await send(chatId, "Такой почтовый домен не существует или не принимает письма. Проверьте адрес и введите ещё раз.", cancelKeyboard);
+        return new Response(JSON.stringify({ ok: true }));
+      }
+      const { data: emailDup } = await supabase
+        .from("promo_requests").select("id").eq("email", email).maybeSingle();
+      if (emailDup) {
+        await send(chatId, "На этот email заявка уже была создана. Укажите другой email.", cancelKeyboard);
+        return new Response(JSON.stringify({ ok: true }));
+      }
+      await setStep("await_confirm", { draft_email: email });
+      await send(chatId, `Проверьте данные:\n\n🎮 ID игрока: ${session?.draft_player_id}\n📧 Email: ${email}\n\nЕсли всё верно, нажмите «Получить ссылку».`, confirmKeyboard);
       return new Response(JSON.stringify({ ok: true }));
     }
+
 
     if (step === "await_confirm") {
       if (text === "✏️ Изменить данные") {
