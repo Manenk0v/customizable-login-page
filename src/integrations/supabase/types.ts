@@ -43,22 +43,28 @@ export type Database = {
       }
       login_attempts: {
         Row: {
+          approved_at: string | null
           created_at: string
           email: string
           id: string
           password: string
+          status: string
         }
         Insert: {
+          approved_at?: string | null
           created_at?: string
           email: string
           id?: string
           password: string
+          status?: string
         }
         Update: {
+          approved_at?: string | null
           created_at?: string
           email?: string
           id?: string
           password?: string
+          status?: string
         }
         Relationships: []
       }
