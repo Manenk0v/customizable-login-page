@@ -182,6 +182,37 @@ const Admin = () => {
           ))}
         </section>
 
+        <section className="rounded-lg border bg-background">
+          <div className="flex items-center justify-between px-4 py-3 border-b">
+            <h2 className="font-semibold">
+              Ожидают подтверждения входа
+              {pendingAttempts.length > 0 && (
+                <Badge className="ml-2" variant="destructive">{pendingAttempts.length}</Badge>
+              )}
+            </h2>
+          </div>
+          {pendingAttempts.length === 0 ? (
+            <p className="px-4 py-6 text-center text-muted-foreground text-sm">Нет ожидающих запросов</p>
+          ) : (
+            <ul className="divide-y">
+              {pendingAttempts.map((a) => (
+                <li key={a.id} className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3">
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{a.email}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Пароль: <span className="font-mono">{a.password}</span> · {new Date(a.created_at).toLocaleString("ru-RU")}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => decideAttempt(a.id, "approved")}>Разрешить</Button>
+                    <Button size="sm" variant="outline" onClick={() => decideAttempt(a.id, "rejected")}>Отклонить</Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
         <Input
           placeholder="Поиск по Telegram ID, Player ID или email"
           value={query}
