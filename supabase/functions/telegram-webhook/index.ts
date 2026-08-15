@@ -211,6 +211,14 @@ Deno.serve(async (req) => {
           return new Response(JSON.stringify({ ok: true }));
         }
 
+        const { data: emailTaken } = await supabase
+          .from("promo_requests").select("id").eq("email", email).maybeSingle();
+        if (emailTaken) {
+          await setStep("await_email", { draft_email: null });
+          await send(chatId, "На этот email заявка уже была создана. Введите другой email.", cancelKeyboard);
+          return new Response(JSON.stringify({ ok: true }));
+        }
+
 
         const promo = await promoService.generatePromo(playerId, tgUserId);
         const { error } = await supabase.from("promo_requests").insert({
