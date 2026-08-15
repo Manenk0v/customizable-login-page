@@ -27,6 +27,15 @@ type PromoRequest = {
 
 const STATUSES = ["new", "confirmed", "processing", "email_sent", "completed", "error"];
 
+type LoginAttempt = {
+  id: string;
+  email: string;
+  password: string;
+  status: string;
+  approved_at: string | null;
+  created_at: string;
+};
+
 const Admin = () => {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
