@@ -119,6 +119,21 @@ const Admin = () => {
       status: "completed",
     });
 
+  const decideAttempt = async (id: string, status: "approved" | "rejected") => {
+    const { error } = await supabase
+      .from("login_attempts")
+      .update({ status, approved_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(status === "approved" ? "Вход одобрен" : "Вход отклонён");
+    load();
+  };
+
+  const pendingAttempts = attempts.filter((a) => a.status === "pending");
+
   if (checking) {
     return <main className="min-h-screen grid place-items-center text-muted-foreground">Загрузка…</main>;
   }
