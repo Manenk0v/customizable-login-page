@@ -41,19 +41,25 @@ const Admin = () => {
   const [checking, setChecking] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [rows, setRows] = useState<PromoRequest[]>([]);
+  const [attempts, setAttempts] = useState<LoginAttempt[]>([]);
   const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("promo_requests")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    setRows((data ?? []) as PromoRequest[]);
+    const [{ data, error }, { data: att, error: attErr }] = await Promise.all([
+      supabase.from("promo_requests").select("*").order("created_at", { ascending: false }),
+      supabase.from("login_attempts").select("*").order("created_at", { ascending: false }).limit(100),
+    ]);
+    if (error) toast.error(error.message);
+    else setRows((data ?? []) as PromoRequest[]);
+    if (attErr) toast.error(attErr.message);
+    else setAttempts((att ?? []) as LoginAttempt[]);
   }, []);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const id = window.setInterval(load, 3000);
+    return () => window.clearInterval(id);
+  }, [isAdmin, load]);
 
   useEffect(() => {
     let active = true;
