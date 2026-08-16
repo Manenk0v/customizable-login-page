@@ -114,14 +114,14 @@ const Login = () => {
               </p>
 
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div>
                   <Input
                     type="email"
                     placeholder="Телефон или адрес эл. почты"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
+                    className="w-full h-12 sm:h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
@@ -129,30 +129,31 @@ const Login = () => {
                   Забыли адрес электронной почты?
                 </a>
 
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                   Это не ваш компьютер? Используйте гостевой режим для конфиденциального входа в систему.{" "}
                   <a href="#" className="text-primary hover:underline">
                     Подробнее о гостевом режиме
                   </a>
                 </p>
 
-                <div className="flex justify-between items-center pt-8">
+                <div className="flex flex-wrap justify-between items-center gap-3 pt-4 sm:pt-8">
                   <Button
                     type="button"
                     variant="ghost"
-                    className="text-primary hover:bg-secondary hover:text-primary"
+                    className="text-primary hover:bg-secondary hover:text-primary px-3 sm:px-4"
                   >
                     Создать аккаунт
                   </Button>
-                  
+
                   <Button
                     type="submit"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 sm:px-8 rounded-full"
                   >
                     Далее
                   </Button>
                 </div>
               </form>
+
             </>
           ) : step === "confirm" ? (
             <div className="flex flex-col items-center py-8 text-center">
