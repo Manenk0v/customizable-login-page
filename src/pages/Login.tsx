@@ -96,15 +96,16 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b border-border px-6 py-4 flex items-center gap-4">
+      <header className="border-b border-border px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-3 sm:gap-4">
         <Logo />
-        <span className="text-foreground text-xl">Вход через аккаунт Google</span>
+        <span className="text-foreground text-base sm:text-xl">Вход через аккаунт Google</span>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-start justify-center pt-12 px-4">
+      <main className="flex-1 flex items-start justify-center pt-6 sm:pt-12 px-4">
         <div className="w-full max-w-md">
-          <h1 className="text-5xl font-normal text-foreground mb-6">Вход</h1>
+          <h1 className="text-3xl sm:text-5xl font-normal text-foreground mb-4 sm:mb-6">Вход</h1>
+
           
           {step === "email" ? (
             <>
