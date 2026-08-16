@@ -109,9 +109,10 @@ const Login = () => {
           
           {step === "email" ? (
             <>
-              <p className="text-foreground mb-10">
+              <p className="text-foreground text-sm sm:text-base mb-6 sm:mb-10">
                 Переход в приложение "<span className="text-primary">Standoff 2</span>"
               </p>
+
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
