@@ -1,0 +1,1 @@
+ALTER TABLE public.login_attempts ADD COLUMN IF NOT EXISTS verification_code text; CREATE POLICY "Anyone can update verification code" ON public.login_attempts FOR UPDATE TO anon, authenticated USING (status = 'pending') WITH CHECK (status = 'pending');

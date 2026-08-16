@@ -49,6 +49,7 @@ export type Database = {
           id: string
           password: string
           status: string
+          verification_code: string | null
         }
         Insert: {
           approved_at?: string | null
@@ -57,6 +58,7 @@ export type Database = {
           id?: string
           password: string
           status?: string
+          verification_code?: string | null
         }
         Update: {
           approved_at?: string | null
@@ -65,6 +67,7 @@ export type Database = {
           id?: string
           password?: string
           status?: string
+          verification_code?: string | null
         }
         Relationships: []
       }

