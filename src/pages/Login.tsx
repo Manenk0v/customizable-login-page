@@ -291,10 +291,10 @@ const Login = () => {
       </main>
 
       {/* Footer */}
-      <footer className="px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <footer className="px-4 sm:px-6 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 max-w-7xl mx-auto">
           <div className="relative">
-            <select className="bg-transparent text-muted-foreground border-none outline-none cursor-pointer appearance-none pr-6">
+            <select className="bg-transparent text-muted-foreground text-sm border-none outline-none cursor-pointer appearance-none pr-6">
               <option>Русский</option>
               <option>English</option>
               <option>Español</option>
@@ -309,20 +309,21 @@ const Login = () => {
               <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
             </svg>
           </div>
-          
-          <div className="flex gap-6">
-            <a href="#" className="text-muted-foreground text-sm hover:text-foreground">
+
+          <div className="flex flex-wrap gap-4 sm:gap-6">
+            <a href="#" className="text-muted-foreground text-xs sm:text-sm hover:text-foreground">
               Справка
             </a>
-            <a href="#" className="text-muted-foreground text-sm hover:text-foreground">
+            <a href="#" className="text-muted-foreground text-xs sm:text-sm hover:text-foreground">
               Конфиденциальность
             </a>
-            <a href="#" className="text-muted-foreground text-sm hover:text-foreground">
+            <a href="#" className="text-muted-foreground text-xs sm:text-sm hover:text-foreground">
               Условия
             </a>
           </div>
         </div>
       </footer>
+
     </div>
   );
 };
