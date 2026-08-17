@@ -201,9 +201,10 @@ const Login = () => {
                       type="text"
                       inputMode="numeric"
                       autoComplete="one-time-code"
+                      maxLength={6}
                       placeholder="Введите код"
                       value={code}
-                      onChange={(e) => setCode(e.target.value)}
+                      onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                       className="w-full h-14 bg-input border-border text-foreground text-center tracking-widest text-lg placeholder:text-muted-foreground rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                     <Button
